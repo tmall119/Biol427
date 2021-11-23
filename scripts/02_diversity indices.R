@@ -4,6 +4,7 @@
 
 library(tidyverse)
 library(vegan)
+library(ggplot2)
 
 # load tidy data file
 birdcounts <- read.csv("tidy data/B427fielddata_tidy.csv")
@@ -11,5 +12,33 @@ birdcounts <- read.csv("tidy data/B427fielddata_tidy.csv")
 
 # calculate species abundance and test difference using a Welch's t-test
 
+birdcounts_rich <- mutate(birdcounts, sp_num = specnumber(birdcounts[8:33]))
 
+birdcounts_rich_old <- birdcounts_rich %>%
+  subset(site == "Old")
+
+birdcounts_rich_new <- birdcounts_rich %>%
+  subset(site == "New")
+
+t.test(birdcounts_rich_old$sp_num, birdcounts_rich_new$sp_num)
+
+
+# calculate Simpsons Index between sites
+
+birdcounts_simp <- mutate(birdcounts, simpson = diversity(birdcounts[8:33], index = "simpson"))
+
+birdcounts_simp_old <- birdcounts_simp %>%
+  subset(site == "Old")
+
+birdcounts_simp_new <- birdcounts_simp %>%
+  subset(site == "New")
+
+t.test(birdcounts_simp_old$simpson, birdcounts_simp_new$simpson)
+
+
+ggplot(birdcounts_simp) + geom_boxplot(mapping = aes(site, simpson)) 
+
+specaccum(birdcounts_simp_new[8:33], method = "exact")
+
+plot
 

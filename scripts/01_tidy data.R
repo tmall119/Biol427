@@ -4,8 +4,6 @@
 
 library(tidyverse)
 library(lubridate)
-library(vegan)
-
 
 
 ## load raw field data
@@ -23,8 +21,8 @@ birdcounts <- birdcounts_raw %>%
   subset(select = -c(notes)) %>%
   pivot_wider(names_from = species, values_from = count, values_fill = 0)
 
+## save tidy dataset
 
-
-
+write.csv(birdcounts, "tidy data/B427fielddata_tidy.csv")
 
 
