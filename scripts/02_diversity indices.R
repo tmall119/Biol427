@@ -6,11 +6,11 @@ library(tidyverse)
 library(vegan)
 library(ggplot2)
 
-# load tidy data file
+## load tidy data file
 birdcounts <- read.csv("tidy data/B427fielddata_tidy.csv")
 
 
-# calculate species abundance and test difference using a Welch's t-test
+## calculate species richness per site, per visit
 
 birdcounts_rich <- mutate(birdcounts, sp_num = specnumber(birdcounts[8:33]))
 
@@ -20,10 +20,12 @@ birdcounts_rich_old <- birdcounts_rich %>%
 birdcounts_rich_new <- birdcounts_rich %>%
   subset(site == "New")
 
-t.test(birdcounts_rich_old$sp_num, birdcounts_rich_new$sp_num)
+# paired t-test of species # differences between sites (paired cntl for extraneous variables impacting each visit by treating the 2 as a related observation)
+
+t.test(birdcounts_rich_old$sp_num, birdcounts_rich_new$sp_num, paired = TRUE)
 
 
-# calculate Simpsons Index between sites
+## calculate Simpsons Index between sites
 
 birdcounts_simp <- mutate(birdcounts, simpson = diversity(birdcounts[8:33], index = "simpson"))
 
@@ -33,12 +35,24 @@ birdcounts_simp_old <- birdcounts_simp %>%
 birdcounts_simp_new <- birdcounts_simp %>%
   subset(site == "New")
 
-## subtract old from new, run paired T
-t.test(birdcounts_simp_old$simpson, birdcounts_simp_new$simpson)
+#  paired t-test on difference in Simpson's Index between sites
 
 t.test(birdcounts_simp_new$simpson, birdcounts_simp_old$simpson, paired = TRUE)
 
-ggplot(birdcounts_simp) + geom_col(aes(date, simpson, fill = site), position = "dodge") + theme_classic()
+## graphics for simpsons comparisons between sites
+
+
+ggplot(birdcounts_simp) + 
+  geom_col(aes(date, simpson, fill = site), position = "dodge") +
+  theme_classic()
+
+ggsave("figures/simpson_pervisit.png")
+
+ggplot(birdcounts_simp) + 
+  geom_boxplot(aes(site, simpson))+
+  theme_classic()
+
+ggsave("figures/simpson_box.png")
 
 ggplot(birdcounts_simp) + 
   geom_boxplot(aes(site, simpson)) +
@@ -47,7 +61,7 @@ ggplot(birdcounts_simp) +
   theme_classic()
 
   
-
+ggsave("figures/simpson_pairedbx.png")
 
 
 
