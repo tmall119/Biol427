@@ -12,13 +12,18 @@ birdcounts <- read.csv("tidy data/B427fielddata_tidy.csv")
 
 ## calculate species richness per site, per visit
 
-birdcounts_rich <- mutate(birdcounts, sp_num = specnumber(birdcounts[8:33]))
+birdcounts_rich <- mutate(birdcounts, sp_num = specnumber(birdcounts[8:30]))
 
 birdcounts_rich_old <- birdcounts_rich %>%
   subset(site == "Old")
 
+write.csv(birdcounts_rich_old, "tidy data/birdcounts_rich_old.csv")
+
 birdcounts_rich_new <- birdcounts_rich %>%
   subset(site == "New")
+
+write.csv(birdcounts_rich_new, "tidy data/birdcounts_rich_new.csv")
+
 
 # paired t-test of species # differences between sites (paired cntl for extraneous variables impacting each visit by treating the 2 as a related observation)
 
@@ -27,7 +32,7 @@ t.test(birdcounts_rich_old$sp_num, birdcounts_rich_new$sp_num, paired = TRUE)
 
 ## calculate Simpsons Index between sites
 
-birdcounts_simp <- mutate(birdcounts, simpson = diversity(birdcounts[8:33], index = "simpson"))
+birdcounts_simp <- mutate(birdcounts, simpson = diversity(birdcounts[8:30], index = "simpson"))
 
 birdcounts_simp_old <- birdcounts_simp %>%
   subset(site == "Old")
