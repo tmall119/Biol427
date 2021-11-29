@@ -15,6 +15,13 @@ birdcounts_raw <- read.csv("raw data/B427fielddata_raw.csv")
 birdcounts_raw$date <- as_date(birdcounts_raw$date, format = "%d-%m-%Y")
 birdcounts_raw$sunrise <- hms(birdcounts_raw$sunrise)
 
+
+## fix song sparrow ID names
+
+birdcounts_raw <- birdcounts_raw %>%
+  mutate(species = 
+           replace(species, species == "Song Sparrow ", "Song Sparrow"))
+
 ## Pivot dataset wider to have every sample be a line. This will allow for diversity indicies to be calculated per each sample
 
 birdcounts <- birdcounts_raw %>%
